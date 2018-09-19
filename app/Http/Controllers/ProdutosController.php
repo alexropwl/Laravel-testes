@@ -12,9 +12,17 @@ class ProdutosController extends Controller {
 
     public function index() {
 
-        $produtos = Produtos::paginate(4);
+        $produtos = Produtos::paginate(10);
+        $maiscaro = Produtos::all()->max('preco');
+        $maisbarato = Produtos::all()->min('preco');
+        $media = Produtos::all()->avg('preco');
+        $soma = Produtos::all()->sum('preco');
+        
+        
+        
 
-        return view('produtos/index', array('produtos' => $produtos, 'buscar'=> null));
+        return view('produtos/index', array('produtos' => $produtos,'buscar'=> null,
+            'maiscaro'=>$maiscaro, 'media'=>$media, 'maisbarato'=>$maisbarato, 'soma'=>$soma));
         
     }
 
@@ -157,5 +165,39 @@ class ProdutosController extends Controller {
           }
        
        
+          
+          public function ordem(Request $request){
+              
+              $ordemInput = $request->input('ordem');
+              
+              if($ordemInput ==1){
+                  $campo = 'titulo';
+                  $tipo = 'asc';
+                  
+              }else if($ordemInput ==2){
+                  $campo = 'titulo';
+                  $tipo = 'desc';
+                                   
+              }else if($ordemInput ==3){
+                  
+                  $campo = 'preco';
+                  $tipo = 'desc';
+                  
+              }
+              
+              else if($ordemInput == 4){
+                  
+                  $campo = 'preco';
+                  $tipo='asc';
+                  
+              }
+              
+              $produtos = Produtos::orderBy($campo,$tipo)->paginate(4);
+              
+              return view('produtos.index', array('produtos' =>$produtos, 'buscar'=> null));
+              
+              
+              
+          }
        
         }
